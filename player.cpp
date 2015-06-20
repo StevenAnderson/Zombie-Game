@@ -20,12 +20,13 @@ string player::getgun(){
     
 }
 void player::setgun(string newgun){
-    this->gun=gun;
+    this->gun=newgun;
     
 }
 
 string player::getpowerup(){
-   
+   if (powerup=="")
+       cout<< "None";
     return powerup;
 }
 void player::setpowerup(string powerup){

@@ -6,7 +6,7 @@
 #include <vector>
 void tutorial();
 void usepowerup(string powerup, player& p1, vector<zombie>& zombs, int totzombies);
-void fighting(string droppedpowerup, player& p1, vector<zombie>& zombs, int& totzombies, string droppedgun, int& points);
+void fighting(string& droppedpowerup,string&  availablepowerup, player& p1, vector<zombie>& zombs, int& totzombies, string& droppedgun, string&  availablegun, int& points);
 
 using namespace std;
 int main (){
@@ -16,7 +16,7 @@ int main (){
     string guns[gunsize]={"pistol", "shotgun", "uzi", "50 cal"};
     string powerups[gunsize]={"heal", "TNT", "nuke", "insta-kill"};//Not needed??
 
-    cout << "Zombie Slayer 1.0" << endl;//title
+    cout << "Zombie Slayer 1.5" << endl;//title
     
     string name; // player name
     int level=1; // level
@@ -35,54 +35,49 @@ int main (){
     //level while-loop // dependant on health //
     while (p1.gethealth()>0){
         cout << "LEVEL " << level << endl;
-        cout << "Health: " << p1.gethealth()<< "    " << "Gun: " << p1.getgun()<< "    "  << "Powerups: " << p1.getpowerup()<<endl;
-        string droppedgun;
+        cout << "Health: " << p1.gethealth()<< "    " << "Gun: " << p1.getgun()<< "    "  << "Powerups: " << p1.getpowerup()<< "    " << "Total Points: " << points << endl;
+        string droppedgun="";
         string droppedpowerup;
          vector<zombie> zombs;
         //level random numbers
        int addzombies=rand()% level;
         int totzombies=addzombies+level;//zombies in level
-        int hitstrength=rand()% level+1;//difficulty - for strength of hits
         int healthdif=rand()% level+1;//difficulty - for health
         
         //determining dropped gun if-statements
-        {int gun=rand()% 20;//guns
-        if (guns[1]!="")
+        int gun=rand()% 10;//guns
+        if (p1.getgun()=="pistol")
         {
-            if (gun==1||gun==2 ||gun==3||gun==4||gun==5)
-            {
-                droppedgun="shotgun";
-                guns[1]="";
-            }
+       if (gun==1||gun==2|| gun ==3||gun==4||gun==5)
+           droppedgun="shotgun";
+            else cout << "no gun picked" << endl;
         }
-        else if (guns[2]!=""){
-            if (gun==1||gun==2 ||gun==3||gun==4)
-            {
-                droppedgun="uzi";
-                 guns[2]="";
-            }
-            
-        }
-        else
-            droppedgun="50 cal";
-    }
+        else if (p1.getgun()=="shotgun"){
+            if (gun==1||gun==2|| gun ==3|| gun==4)
+                droppedgun="uzi";}
+        else if (p1.getgun()=="uzi"){
+            if (gun==1||gun==2)
+                droppedgun="50 cal";}
+        
     //determining dropped power up
-        {
-        int powerup=rand()% 20;
-        if (powerup==1||powerup==2||powerup==3)
+        
+        int powerup=rand()% 10;
+        if (powerup==1||powerup==2)
             droppedpowerup="health";
         else if (powerup==4||powerup==5)
             droppedpowerup="TNT";
-        else if (powerup==6||powerup==7)
+        else if (powerup==6)
             droppedpowerup="insta-kill";
         else if (powerup==8)
             droppedpowerup="nuke";
-        }
         
+        string  availablepowerup;
+        string  availablegun;
         cout << totzombies << " zombies suddenly appear heading towards you!" << endl;
         for (int i=totzombies;i>0;i--){//for-loop creating the number of zombie objects
             //health increases randomly, color is set, hit strenght is random, position makes it so no zombies are the same distance, points are static at the moment
-            zombie z(5+healthdif,"green", hitstrength, 2+totzombies, 2);
+            int hitstrength=rand()% level+1;//difficulty - for strength of hits - (strength of hits decides points)
+            zombie z(5+healthdif,"green", hitstrength, 2+totzombies, hitstrength);
            
             zombs.push_back(z);
             
@@ -90,20 +85,16 @@ int main (){
         //combat portion of loop
         
         while (totzombies!=0){//loops until zombies are dead... or you are.
-            fighting(droppedpowerup,p1, zombs , totzombies, droppedpowerup, points);////fighting function!
+            fighting(droppedpowerup,  availablepowerup, p1, zombs , totzombies, droppedgun, availablegun, points);////fighting function!
             if (p1.gethealth()<=0)/// for if the player dies, still exits loop.
                 totzombies=0;
         }
         if (p1.gethealth()>0){
             cout << "Zombie wave Level " << level << " Completed!" << endl;
-            cout << "Total Points: " << points << endl;
                             }
         cout << endl;
         
-        // exit so not infinite loop---- out of level loop
-        if (level==10)
-        p1.sethealth(0);
-        else
+       
         level++;
   }
     cout << "It appears you died..." << endl;
@@ -118,10 +109,8 @@ int main (){
     
     return 0;
 }
-void fighting(string droppedpowerup, player& p1, vector<zombie>& zombs, int& totzombies, string droppedgun, int& points){
+void fighting(string& droppedpowerup, string&  availablepowerup, player& p1, vector<zombie>& zombs, int& totzombies, string& droppedgun,string&  availablegun, int& points){
     string command;
-    string actualldroppedgun;
-    string actualldroppedpowerup;
     int startingtot=totzombies;
     
     cout << "Shoot them before you get eaten!" << endl;
@@ -130,43 +119,69 @@ void fighting(string droppedpowerup, player& p1, vector<zombie>& zombs, int& tot
         if (command=="shoot")//topzombie on vector is closest
         {zombs[totzombies-1].gethit(p1.getgun());//[totzombies-1]???????
             cout << "Zombie hit!" << endl;
-            if (zombs[totzombies-1].gethealth()<=0) {
-                cout << "Zombie killed!" << endl;
-                points+=zombs[totzombies-1].getpoints();
-                totzombies--;
-            }
-        }
+                   }
       else if (command=="usepowerup")
             {
            
-            if (p1.getpowerup()!="")
+                if (p1.getpowerup()!=""){
             usepowerup( p1.getpowerup(), p1, zombs,  totzombies);
+                    
+                }
             else
                 cout << "No powerup to use." << endl;
             }
        else if (command=="pickuppowerup")
             {
-            if (actualldroppedpowerup!="")
-            p1.setpowerup(droppedpowerup);
+            if ( availablepowerup!="")
+            {
+            p1.setpowerup(availablepowerup);
+                cout << "Powerup picked up!" << endl;
+            }
             else
                 cout << "No dropped powerup." << endl;
             }
        else if (command=="pickupgun")
             {
-            if (actualldroppedgun!="")
-            p1.setgun(droppedgun);
+            if ( availablegun!="")
+            {
+            p1.setgun(availablegun);
+                cout << "Gun picked up!" << endl;
+                cout<< p1.getgun()<< " is registered." << endl;
+            }
             else
                 cout << "No dropped gun" << endl;
             }
     else
         cout << "Not valid command: " << command << endl;
     ///after command, zombies move or attack,
+    ////////////
+    for (int i=0; i<startingtot;i++)
+    {
+    if (zombs[totzombies-1].gethealth()<=0)
+    {
+        cout << "Zombie " << totzombies << " killed!" << endl;
+        points+=zombs[totzombies-1].getpoints();
+        totzombies--;
+    
+        if (droppedgun!="" && totzombies!=0)//to only drop the gun up once
+        {   cout << "A weapon is dropped: " << droppedgun << " !" << endl;
+            availablegun=droppedgun;
+            droppedgun="";
+        }
+        if (droppedpowerup!="" && totzombies!=0)//to only drop the power up once
+        {   cout << "A powerup is dropped: " << droppedpowerup << " !" << endl;
+            availablepowerup=droppedpowerup;
+            droppedpowerup="";
+        }
+    }
+    }
+//////////copied from shoot command
     if (totzombies!=0)
     cout << "zombies shuffle closer towards you" << endl;
     for (int i=0; i<startingtot; i++) {
         zombs[i].setlocation(1);
-        if (zombs[i].getlocation()<=0){
-            cout << "Zombie " << i+1<< " attacks and does " << zombs[i].getstrength() << " points of damage!!" << endl;
+        if (zombs[i].getlocation()<=0 && zombs[i].gethealth()>=0){
+            cout << "Zombie " << i+1 << " attacks and does " << zombs[i].getstrength() << " points of damage!!" << endl;
             p1.gethit(zombs[i].getstrength());
         }
     }
@@ -219,11 +234,13 @@ void tutorial(){
 void usepowerup(string powerup, player& p1, vector<zombie>& zombs, int totzombies){
     if (powerup=="health"){///Heal powerup
         cout<< "Healed!" << endl;
-        p1.gethealed(3);
+        p1.gethealed(10);
+        p1.setpowerup("");
     }
     
     else if (powerup=="insta-kill"){//instakill powerup
         cout<< "insta-kill activated" << endl;
+        p1.setpowerup("");
 
         for (int i=0; i<totzombies;i++){
             zombs[i].sethealth(1);
@@ -232,9 +249,10 @@ void usepowerup(string powerup, player& p1, vector<zombie>& zombs, int totzombie
     else if (powerup=="TNT")//////tnt powerup
     {
         cout<< "*Huge Explosion!*" << endl;
-        
+        p1.setpowerup("");
+
         for (int i=0; i<totzombies;i++){
-            zombs[i].getdamage(4);
+            zombs[i].getdamage(5);
                                         }
     }
     else if (powerup=="nuke"){////nuke powerup

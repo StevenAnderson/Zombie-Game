@@ -2,12 +2,6 @@
 #include "zombie.h"
 
 
-int zombie::gethealth(){
-    return health;
-}
-void  zombie::sethealth(int health){
-    this->health=health;
-}
 
 int  zombie::getstrength(){
     return strength;

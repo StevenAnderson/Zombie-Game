@@ -2,10 +2,12 @@
 #ifndef __GAMEfinalproj__player__
 #define __GAMEfinalproj__player__
 #include <iostream>
+#include "living.h"
+
 using namespace std;
-class player{
+
+class player : public living {
 private:
-    int health;
     string gun;
     string powerup;
     
@@ -15,8 +17,7 @@ public:
         gun="pistol";
         powerup="";
     }
-    int gethealth();
-    void sethealth(int health);
+
     
     void gethit(int damage);
     void gethealed(int health);

@@ -1,11 +1,5 @@
 
 #include "player.h"
-int player::gethealth(){
-    return health;
-}
-void player::sethealth(int health){
-    this->health=health;
-}
 
 void player::gethit(int damage){
     this->health-=damage;

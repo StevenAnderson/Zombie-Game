@@ -3,10 +3,11 @@
 #define __GAMEfinalproj__zombie__
 #include <iostream>
 #include "player.h"
+#include "living.h"
+
 using namespace std;
-class zombie{
+class zombie : public living {
 private:
-    int health;
     string color;
     int strength;
     int location;
@@ -41,9 +42,7 @@ public:
         this->location=location;
         this->points=points;
     }
-    int gethealth();
-    void sethealth(int health);
-    
+        
     int getstrength();
     void setstrength(int strength);
 

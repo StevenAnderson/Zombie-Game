@@ -104,129 +104,76 @@ int main (){
     cout << "It appears you died..." << endl;
     cout << "Final Score: " << points << endl;
     cout << endl;
-
-    fstream iofile ("/Users/Steven/Desktop/highscore.txt", ios::in|ios::out);
+    fstream iofile ("highscore.txt", ios::in|ios::out);
     if (!iofile)
     {   //if no file exists
-        iofile.open("/Users/Steven/Desktop/highscore.txt", ios::out);
+        iofile.open("highscore.txt", ios::out);
         cout<< "You are the first to play this game! New High Score!" << endl;
         //inputs score
+        iofile.seekg( 0, ios::beg );
         iofile << "1st " << name << " " << points << endl;
+        
     }
     else {
-        string first;
-        vector<string> scores;
+        string line;
+        string score;
+        int scores[5];
+        string names[5];
+        string place[5]={"1st ", "2nd ", "3rd ", "4th ", "5th "};
+        
         //places every line in a vector
-        while( getline (iofile, first)){
-            scores.push_back(first);
-        }//places first high score if none exist
-        
-        if (scores[0] == ""){
-            cout<< "You are the first to play this game! New High Score!" << endl;
+        int loop=0;
+        while( getline (iofile, line)){
             
-            iofile << "1st " << name << " " << points << endl;
             
-        }
-            
-       else //loops for top 5 scores
-       {for (int k=0; k<5; k++)
-           if (scores[k]==""){
-               string defaultplace;
-               
-               if (k==1)
-                   defaultplace="2nd";
-               if (k==2)
-                   defaultplace="3rd";
-               if (k==3)
-                   defaultplace="4th";
-               if (k==4)
-                   defaultplace="5th";
-                   
-               cout << "Your score is " << defaultplace<< " place by default!" << endl;
-               scores[k]=defaultplace+ " " +name+to_string(points);
-           }
-           else
-        {
-            string score="";
-            string place="";
-            first = scores[k];
             int i=0;
-            // stores place (1st, 2nd, 3rd..) into string
-            for (; first[i]!=' '; i++){ //place
-                place+=first[i];
-            }
+            ///going over the place
+            for (; line[i]!=' '; i++){} //place
+            
             i++;//skippping blank space
             
-            for (int j=0; first[i]!=' '; j++){// skipping name
+            for (int j=0; line[i]!=' '; j++){// skipping name
+                names[loop]+=line[i];
                 i++;}
             
             i++;//skippping blank space
             
-            for (int j=0;first[i]!='\0' ; j++){//places score into string for comparison
-                score+=first[i];
-                i++;}
-
-            if (score<to_string(points)){
-                cout << "Congrats! You now have the " << place << " highest score!" << endl;
-                string temp=scores[k];
-                scores[k]=" "+ name +" "+ to_string(points);
-                //switching the vector cells with the ones below um.
-                for (int i=5; i>k ; i--) {
-                    scores[i]=scores[i-1];
-                }
-                if (scores.size()==1)
-                    scores.push_back(temp);
-                else
-                scores[k+1]=temp;
-                
-                k=5;//exits once it is greater than the current score
+            for (int j=0;line[i]!='\0' ; j++){//places score into string for comparison
+                scores[loop]*=10;
+                scores[loop]+=line[i]-'0';
+                i++;
             }
-    
             
+            loop++;
         }
-       }
-        cout << "High Scores:" << endl;
-        string outputplace;
-        for (int i=0;i<5;i++)
-        {
         
-            if (i==1)
-                outputplace="2nd";
-            if (i==2)
-                outputplace="3rd";
-            if (i==3)
-                outputplace="4th";
-            if (i==4)
-                outputplace="5th";
-            if ( i==0){
-                 outputplace="1st";
-        iofile <<outputplace<< scores[i]<< endl;
-            cout << outputplace<< scores[i] << endl;}
-        else
-            {//to cut off the previous rankings
-                int l=3;
-                string line=scores[i];
-                iofile <<outputplace;
-                cout<< outputplace<< " ";
-                while(line[l]!=' '){
-                    for (; l<100; l++)
-                        {
-                    iofile << line[l];
-                            cout << line[l];
-                        }
-                }
-                iofile<< endl;
-                cout << endl;
+        for (int i=0; i<5; i++) {
+            if (points>scores[i])
+            {
+                //int temp=scores[i];
+                scores[i+1]=scores[i];
+                scores[i]=points;
+                string tempname=names[i];
+                names[i+1]=names[i];
+                names[i]=name;
                 
+                i=5;
             }
+            
         }
+        cout<< "High Scores:" << endl;
+        iofile.clear();
+        iofile.seekg( 0, ios::beg );
+
+        for (int i=0; i<5; i++){
+            iofile <<place[i]<< names[i]<< " " << scores[i]<< endl;
+            cout<<place[i]<< names[i]<< " " << scores[i]<< endl;
+        }
+        
+        
+        
     }
-    
-    //stacking powerups
-    //more random dropping times (totzombie rand number/not=to last zomb)
-    //iofile.flush();
     iofile.close();
-    
     return 0;
 }
 void fighting(string& droppedpowerup, string&  availablepowerup, player& p1, vector<zombie>& zombs, int& totzombies, string& droppedgun,string&  availablegun, int& points){
@@ -313,6 +260,13 @@ void fighting(string& droppedpowerup, string&  availablepowerup, player& p1, vec
                cout << "Looks like you chose to keep fighting! Good Luck" << endl;
            
        }
+    //if swear words, player dies
+       else if (command=="shit" ||command=="damn" ||command=="bitch" ||command=="fuck"){
+           cout<< "Cussing Kills!"  << endl;
+           cout << "A zombie comes out of nowhere and bites your head off!" << endl;
+           p1.sethealth(0);
+           
+       }
     
     else
         cout << "Not valid command: " << command << endl;
@@ -339,7 +293,7 @@ void fighting(string& droppedpowerup, string&  availablepowerup, player& p1, vec
     }
     }
 //////////from shoot command
-    if (totzombies!=0){
+    if (totzombies!=0&& p1.gethealth()>0){
     cout << "zombies shuffle closer towards you" << endl;
         if (zombs[totzombies-1].getlocation()>2)
         cout << "The closest zombie is " << zombs[totzombies-1].getlocation()-1 << " steps from you!"<< endl;

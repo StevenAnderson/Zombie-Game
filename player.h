@@ -5,7 +5,7 @@
 #include "living.h"
 
 using namespace std;
-
+// inheritance of health functions
 class player : public living {
 private:
     string gun;
@@ -18,7 +18,7 @@ public:
         powerup="";
     }
 
-    
+    //function calls
     void gethit(int damage);
     void gethealed(int health);
     

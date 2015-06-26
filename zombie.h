@@ -6,14 +6,17 @@
 #include "living.h"
 
 using namespace std;
+//inheritance of health functions
 class zombie : public living {
 private:
+    
     string color;
     int strength;
     int location;
     int points;
     
 public:
+    //constructors
     zombie (){//small
         health=10;
         color="green";
@@ -42,7 +45,8 @@ public:
         this->location=location;
         this->points=points;
     }
-        
+    
+    //calling functions
     int getstrength();
     void setstrength(int strength);
 

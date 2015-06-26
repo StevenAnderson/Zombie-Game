@@ -84,12 +84,9 @@ int main (){
         
         
         //combat portion of loop
-        
-        while (totzombies!=0){//loops until zombies are dead... or you are.
+            //has recursion built in, as long as theres zombies and p1 has health it'll loop
             fighting(droppedpowerup,  availablepowerup, p1, zombs , totzombies, droppedgun, availablegun, points);////fighting function!
-            if ( p1.gethealth()<=0)/// for if the player dies, still exits loop.
-                totzombies=0;
-        }
+      
         if ( p1.gethealth()>0){
             cout << "Zombie wave Level " << level << " Completed!" << endl;
                             }
@@ -320,7 +317,11 @@ void fighting(string& droppedpowerup, string&  availablepowerup, player& p1, vec
             p1.gethit(zombs[i].getstrength());
         }
     }
+    //recursion
+    while (totzombies!=0 && p1.gethealth()>0){//loops until zombies are dead... or you are.
+        fighting(droppedpowerup,  availablepowerup, p1, zombs , totzombies, droppedgun, availablegun, points);////fighting function!
     
+    }
 }
 //had a long tutorial, decided shorter is better
 void tutorial(){
